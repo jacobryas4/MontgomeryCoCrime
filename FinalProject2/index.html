@@ -1,0 +1,58 @@
+<html>
+    <head>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+    </head>
+    <body>
+
+        <script>
+            
+                    var listOfLocalities = [];
+                    var localities = {};
+            
+                    d3.csv('data/CrimeUpdated.csv', function(data) 
+                    {
+                        for (var i = 0; i < data.length; i++) {
+                            listOfLocalities.push(data[i]["City "]);
+                            //console.log(data[i]["City "]);
+                        }
+                        
+            
+                    });
+            
+            
+                    function dataReady() {
+                        // make bar chart
+                        drawBarChart('United States');
+            
+                        // populate selection list
+                        d3.select('#selectionWidget').selectAll('option').data(listOfLocalities).enter().append('option')
+                            .html(function(d) { return d; })
+                            .attr('value', function(d) { return d; })
+            
+                        d3.select("#selectionWidget")
+                            .on('change', function() {
+            
+                                // clear the contents of the chart
+                                d3.select("#main").selectAll('g').remove();
+            
+                                // figure out the newly selected locality
+                                var selection = document.getElementById('selectionWidget');
+                                var localityName = selection.options[selection.selectedIndex].value;
+            
+                                console.log('new locality: ' + localityName);
+            
+                                // re-draw bar chart for the new locality
+                                drawBarChart(localityName);
+                            });
+                    }
+                        
+            
+                    function drawBarChart(localityName)
+                    {
+                        // drawing code here
+                    }
+                    
+                </script>
+    </body>
+</html>
