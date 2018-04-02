@@ -13,7 +13,13 @@
                     d3.csv('data/CrimeUpdated.csv', function(data) 
                     {
                         for (var i = 0; i < data.length; i++) {
-                            listOfLocalities.push(data[i]["City "]);
+                            listOfLocalities.push(data[i]);
+                            localities[i] = {
+                                city: data[i]["City "],
+                                crime: data[i]["Crime Name3"],
+                                latitude: data[i]["Latitude"],
+                                longitude: data[i]["Longitude"]
+                            }
                             //console.log(data[i]["City "]);
                         }
                         
