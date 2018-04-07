@@ -8,25 +8,34 @@
         <script>
             
                     var listOfLocalities = [];
-                    var localities = {};
-            
+                    var localities = [];
+                    var crimes = [];
+                    var citiesAndSums = [];
                     d3.csv('data/CrimeUpdated.csv', function(data) 
                     {
                         for (var i = 0; i < data.length; i++) {
-                            listOfLocalities.push(data[i]);
+                            
                             localities[i] = {
                                 city: data[i]["City "],
-                                crime: data[i]["Crime Name3"],
-                                latitude: data[i]["Latitude"],
-                                longitude: data[i]["Longitude"]
+                                crime: data[i]["Crime Name2"],
                             }
-                            //console.log(data[i]["City "]);
+                            
                         }
-                        
-            
+
+                        // loop through localities and create crime sums
+                        for (var x = 0; x < localities.length; x++) {
+
+                            if (!listOfLocalities.includes(localities[x].city)) {
+                                listOfLocalities.push(localities[x].city);
+                            }
+                            if (!crimes.includes(localities[x].crime) && localities[x].crime !== 'NOT NIBRS CODE' && localities[x].crime !== 'All Other Offenses') {
+                                crimes.push(localities[x].crime);
+                            }
+                        }
+                    
                     });
-            
-            
+                    
+
                     function dataReady() {
                         // make bar chart
                         drawBarChart('United States');
