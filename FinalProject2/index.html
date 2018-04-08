@@ -10,31 +10,57 @@
                     var listOfLocalities = [];
                     var localities = [];
                     var crimes = [];
-                    var citiesAndSums = [];
+                    var citiesAndSums;
+
+                    var Rockville = [];
+                    var SilverSpring = [];
+                    var Germantown = [];
+                    var Gaithersburg = [];
+                    //var newArr;
+                    count = function (ary, classifier) {
+                        classifier = classifier || String;
+                        return ary.reduce(function (counter, item) {
+                            var p = classifier(item);
+                            counter[p] = counter.hasOwnProperty(p) ? counter[p] + 1 : 1;
+                            return counter;
+                        }, {})
+                    };
+
                     d3.csv('data/CrimeUpdated.csv', function(data) 
                     {
                         for (var i = 0; i < data.length; i++) {
-                            
-                            localities[i] = {
-                                city: data[i]["City "],
-                                crime: data[i]["Crime Name2"],
-                            }
-                            
-                        }
 
-                        // loop through localities and create crime sums
-                        for (var x = 0; x < localities.length; x++) {
-
-                            if (!listOfLocalities.includes(localities[x].city)) {
-                                listOfLocalities.push(localities[x].city);
-                            }
-                            if (!crimes.includes(localities[x].crime) && localities[x].crime !== 'NOT NIBRS CODE' && localities[x].crime !== 'All Other Offenses') {
-                                crimes.push(localities[x].crime);
+                            if (data[i]["Crime Name2"] !== "All Other Offenses" && data[i]["Crime Name2"] !== "NOT NIBRS CODE") {
+                                if (data[i]["City "] == "ROCKVILLE") {
+                                    Rockville.push(data[i]);
+                                } else if (data[i]["City "] == "SILVER SPRING") {
+                                    SilverSpring.push(data[i]);
+                                } else if (data[i]["City "] == "GAITHERSBURG") {
+                                    Gaithersburg.push(data[i]);
+                                } else if (data[i]["City "] == "GERMANTOWN") {
+                                    Germantown.push(data[i]);
+                                }
                             }
                         }
-                    
-                    });
-                    
+                        
+                        SilverSpringCrimes = count(SilverSpring, function(item) {
+                            var crime = item["Crime Name2"];
+                            return crime;
+                        })
+                        RockvilleCrimes = count(Rockville, function(item) {
+                            var crime = item["Crime Name2"];
+                            return crime;
+                        })
+                        GermantownCrimes = count(Germantown, function(item) {
+                            var crime = item["Crime Name2"];
+                            return crime;
+                        })
+                        GaithersburgCrimes = count(Gaithersburg, function(item) {
+                            var crime = item["Crime Name2"];
+                            return crime;
+                        })
+                        
+                    });                    
 
                     function dataReady() {
                         // make bar chart
