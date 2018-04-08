@@ -43,6 +43,7 @@
                             }
                         }
                         
+                        // create arrays of each towns crimes and totals 
                         SilverSpringCrimes = count(SilverSpring, function(item) {
                             var crime = item["Crime Name2"];
                             return crime;
@@ -60,6 +61,8 @@
                             return crime;
                         })
                         
+                        // sort them by crime total from greatest to least
+                        Object.keys(SilverSpringCrimes).sort(function(a,b){return SilverSpringCrimes[a]-SilverSpringCrimes[b]});
                     });                    
 
                     function dataReady() {
