@@ -61,14 +61,6 @@
                     
             </svg>
 
-            <select id="selectionWidget" style="position: absolute; left: 200px; top: 95px">
-                    <option value="Rockville">Rockville</option>
-                    <option value="SilverSpring">Silver Spring</option>
-                    <option value="Germantown">Germantown</option>
-                    <option value="Gaithersburg">Gaithersburg</option>
-                        
-            </select>
-
         <script>
             
                     var listOfLocalities = [];
@@ -84,8 +76,8 @@
                     var margin = {top: 0, right: 0, bottom: 30, left: 65} 
 		            var height = 600 - margin.top - margin.bottom;
 		            var width = 600 - margin.left - margin.right;
-		            var barWidth = 20;
-		            var barOffset = 5;
+		            var barWidth = 15;
+		            var barOffset = 95;
                     //var newArr;
                     count = function (ary, classifier) {
                         classifier = classifier || String;
@@ -101,14 +93,16 @@
                         for (var i = 0; i < data.length; i++) {
 
                             if (data[i]["Crime Name2"] !== "All Other Offenses" && data[i]["Crime Name2"] !== "NOT NIBRS CODE") {
-                                if (data[i]["City "] == "ROCKVILLE") {
-                                    Rockville.push(data[i]);
-                                } else if (data[i]["City "] == "SILVER SPRING") {
-                                    SilverSpring.push(data[i]);
-                                } else if (data[i]["City "] == "GAITHERSBURG") {
-                                    Gaithersburg.push(data[i]);
-                                } else if (data[i]["City "] == "GERMANTOWN") {
-                                    Germantown.push(data[i]);
+                                if (data[i]["Crime Name2"] == "Drug/Narcotic Violations" || data[i]["Crime Name2"] == "Robbery" || data[i]["Crime Name2"] == "Shoplifting" || data[i]["Crime Name2"] == "Motor Vehicle Theft" || data[i]["Crime Name2"] == "Theft From Motor Vehicle" || data[i]["Crime Name2"] == "Theft from Building" || data[i]["Crime Name2"] == "Theft of Motor Vehicle Parts or Accessories" || data[i]["Crime Name2"] == "Burglary/Breaking and Entering" || data[i]["Crime Name2"] == "All other Larceny" || data[i]["Crime Name2"] == "Driving Under the Influence") {
+                                    if (data[i]["City "] == "ROCKVILLE") {
+                                        Rockville.push(data[i]);
+                                    } else if (data[i]["City "] == "SILVER SPRING") {
+                                        SilverSpring.push(data[i]);
+                                    } else if (data[i]["City "] == "GAITHERSBURG") {
+                                        Gaithersburg.push(data[i]);
+                                    } else if (data[i]["City "] == "GERMANTOWN") {
+                                        Germantown.push(data[i]);
+                                    }
                                 }
                             }
                         }
@@ -141,7 +135,7 @@
 
                     function dataReady() {
                         // make bar chart
-                        drawBarChart('Rockville');
+                        drawBarChart();
             
                         d3.select("#selectionWidget")
                             .on('change', function() {
@@ -159,34 +153,35 @@
                                 drawBarChart(localityName);
                             });
                     }
-                        
-            
-                    function drawBarChart(localityName)
+                    
+                    // sort values & keys in ascending orders
+                    // Object.values(crimes[1]).sort((a,b) => {return b - a});
+                    // Object.keys(crimes[1]).sort(function(a,b){return crimes[1][b]-crimes[1][a]});
+
+                    function drawBarChart()
                     {
-                        if(localityName == "Rockville") {
-                            var x = Object.values(crimes[1]).sort((a,b) => {return b - a});
-                            var names = Object.keys(crimes[1]).sort(function(a,b){return crimes[1][b]-crimes[1][a]});
-                            console.log(x);
-                            console.log(names);
-                        } else if (localityName == "SilverSpring") {
-                            var x = Object.values(crimes[0]).sort((a,b) => {return b - a});
-                            var names = Object.keys(crimes[0]).sort(function(a,b){return crimes[0][b]-crimes[0][a]});
-                        } else if (localityName == "Germantown") {
-                            var x = Object.values(crimes[2]).sort((a,b) => {return b - a});
-                            var names = Object.keys(crimes[2]).sort(function(a,b){return crimes[2][b]-crimes[2][a]});
-                        } else if (localityName == "Gaithersburg") {
-                            var x = Object.values(crimes[3]).sort((a,b) => {return b - a});
-                            var names = Object.keys(crimes[3]).sort(function(a,b){return crimes[3][b]-crimes[3][a]});
-                        }
+                        
+                            var RockvilleValues = Object.values(RockvilleCrimes);
+                            var RockvilleKeys = Object.keys(RockvilleCrimes);
+                        
+                            var SilverSpringValues = Object.values(SilverSpringCrimes);
+                            var SilverSpringKeys = Object.keys(SilverSpringCrimes);
+                        
+                            var GermantownValues = Object.values(GermantownCrimes);
+                            var GermantownKeys = Object.keys(GermantownCrimes);
+                        
+                            var GaithersburgValues = Object.values(GaithersburgCrimes);
+                            var GaithersburgKeys = Object.keys(GaithersburgCrimes);
+                        
                        
                        
            
                        var yScale = d3.scaleLinear()
-                                       .domain([0, d3.max(x)])
+                                       .domain([0, d3.max(SilverSpringValues)])
                                        .range([0, height])
            
                        var yAxisValues = d3.scaleLinear()
-                                           .domain([0, d3.max(x)])
+                                           .domain([0, d3.max(SilverSpringValues)])
                                            .range([height, 0])
            
                            yAxisTicks = d3.axisLeft(yAxisValues)
@@ -195,16 +190,16 @@
                         //     revisit x axis values
                            xAxisValues = d3.scaleLinear()
                                            .domain([new Date(1980,1,1), new Date(2012,1,1)])
-                                           .range([0,5000])
+                                           .range([0,2000])
            
                            xAxisTicks = d3.axisBottom(xAxisValues)
                                            .ticks(d3.timeYear.every(5))
            
                        
            
-                       var colors = d3.scaleLinear()
-                           .domain([0, d3.max(x)*0.33, d3.max(x)*0.66, d3.max(x)])
-                           .range(['#B58929', '#C61C6F', '#268BD2', '#85992C'])
+                    //    var colors = d3.scaleLinear()
+                    //        .domain([0, d3.max(x)*0.33, d3.max(x)*0.66, d3.max(x)])
+                    //        .range(['#B58929', '#C61C6F', '#268BD2', '#85992C'])
            
                        var tooltip = d3.select('body')
                                        .append('div')
@@ -214,7 +209,7 @@
                                        .style('opacity', '0')
            
                     
-                       // // drawing code here
+                       // Draw Rockville Bars 
            
                        d3.select('#main').append('g')
                            .attr('width', width + margin.left + margin.right)
@@ -222,7 +217,7 @@
                            .attr('transform', 'translate(' + margin.left + ',' + margin.right + ')')
                        
                            .selectAll('rect')
-                           .data(x)
+                           .data(RockvilleValues)
                            .enter()
                            .append('rect')
                             //    .attr('fill', function(d) {
@@ -243,7 +238,204 @@
                                    tooltip.transition().duration(200)
                                        .style('opacity', 0.9)
            
-                                   tooltip.html(d + " <span class='year'>(" + names[x.indexOf(d)] + ")</span>")
+                                   tooltip.html(d)
+                                       .style('left', (d3.event.pageX - 35) + "px")
+                                       .style('top', (d3.event.pageY - 30) + "px")
+                                       
+                                       
+                                   d3.select(this)
+                                       .style('opacity', 0.5)
+                               })
+                               .on('mouseout', function(d) {
+           
+                                   tooltip.html('')
+           
+                                   d3.select(this)
+                                       .style('opacity', 1)
+                               })
+           
+                               // transitions and animations
+                               .transition()
+                                   .attr('height' , function(d) {
+                                       return yScale(d);
+                                   })
+                                   .attr('y', function(d) {
+                                       return height - yScale(d);
+                                   })
+                                   .delay(function(d, i) {
+                                       return i * 20;
+                                   })
+                                   .duration(200);
+           
+                           var yGuide = d3.select('#main').append('g')
+                                   .attr('transform', 'translate(60,0)')
+                                   .call(yAxisTicks)
+           
+                           var xGuide = d3.select('#main').append('g')
+                                   .attr('transform', 'translate(60,' + height + ')')
+                                   .call(xAxisTicks)
+
+                        // draw SilverSpring bars
+                       d3.select('#main').append('g')
+                           .attr('width', width + margin.left + margin.right)
+                           .attr('height', height + margin.top + margin.bottom)
+                           .attr('transform', 'translate(' + margin.left + ',' + margin.right + ')')
+                       
+                           .selectAll('rect')
+                           .data(SilverSpringValues)
+                           .enter()
+                           .append('rect')
+                            //    .attr('fill', function(d) {
+                            //        return colors(d);
+                            //    })
+                               .attr('fill', "black")
+                               .attr('width', barWidth)
+                               .attr('height' , height)
+                               .attr('x', function(d, i) {
+                                   return (i + 0.15) *(barWidth + barOffset);
+                               })
+                               .attr('y', height)
+                           
+           
+                               // Event Handlers
+                               .on('mouseover', function(d) {
+           
+                                   tooltip.transition().duration(200)
+                                       .style('opacity', 0.9)
+           
+                                   tooltip.html(d)
+                                       .style('left', (d3.event.pageX - 35) + "px")
+                                       .style('top', (d3.event.pageY - 30) + "px")
+                                       
+                                       
+                                   d3.select(this)
+                                       .style('opacity', 0.5)
+                               })
+                               .on('mouseout', function(d) {
+           
+                                   tooltip.html('')
+           
+                                   d3.select(this)
+                                       .style('opacity', 1)
+                               })
+           
+                               // transitions and animations
+                               .transition()
+                                   .attr('height' , function(d) {
+                                       return yScale(d);
+                                   })
+                                   .attr('y', function(d) {
+                                       return height - yScale(d);
+                                   })
+                                   .delay(function(d, i) {
+                                       return i * 20;
+                                   })
+                                   .duration(200);
+           
+                           var yGuide = d3.select('#main').append('g')
+                                   .attr('transform', 'translate(60,0)')
+                                   .call(yAxisTicks)
+           
+                           var xGuide = d3.select('#main').append('g')
+                                   .attr('transform', 'translate(60,' + height + ')')
+                                   .call(xAxisTicks)
+
+                        // draw Germantown Bars
+
+                       d3.select('#main').append('g')
+                           .attr('width', width + margin.left + margin.right)
+                           .attr('height', height + margin.top + margin.bottom)
+                           .attr('transform', 'translate(' + margin.left + ',' + margin.right + ')')
+                       
+                           .selectAll('rect')
+                           .data(GermantownValues)
+                           .enter()
+                           .append('rect')
+                            //    .attr('fill', function(d) {
+                            //        return colors(d);
+                            //    })
+                               .attr('fill', "purple")
+                               .attr('width', barWidth)
+                               .attr('height' , height)
+                               .attr('x', function(d, i) {
+                                   return (i + 0.3) *(barWidth + barOffset);
+                               })
+                               .attr('y', height)
+                           
+           
+                               // Event Handlers
+                               .on('mouseover', function(d) {
+           
+                                   tooltip.transition().duration(200)
+                                       .style('opacity', 0.9)
+           
+                                   tooltip.html(d)
+                                       .style('left', (d3.event.pageX - 35) + "px")
+                                       .style('top', (d3.event.pageY - 30) + "px")
+                                       
+                                       
+                                   d3.select(this)
+                                       .style('opacity', 0.5)
+                               })
+                               .on('mouseout', function(d) {
+           
+                                   tooltip.html('')
+           
+                                   d3.select(this)
+                                       .style('opacity', 1)
+                               })
+           
+                               // transitions and animations
+                               .transition()
+                                   .attr('height' , function(d) {
+                                       return yScale(d);
+                                   })
+                                   .attr('y', function(d) {
+                                       return height - yScale(d);
+                                   })
+                                   .delay(function(d, i) {
+                                       return i * 20;
+                                   })
+                                   .duration(200);
+           
+                           var yGuide = d3.select('#main').append('g')
+                                   .attr('transform', 'translate(60,0)')
+                                   .call(yAxisTicks)
+           
+                           var xGuide = d3.select('#main').append('g')
+                                   .attr('transform', 'translate(60,' + height + ')')
+                                   .call(xAxisTicks)
+
+                       // Gaithersburg bars
+
+                       d3.select('#main').append('g')
+                           .attr('width', width + margin.left + margin.right)
+                           .attr('height', height + margin.top + margin.bottom)
+                           .attr('transform', 'translate(' + margin.left + ',' + margin.right + ')')
+                       
+                           .selectAll('rect')
+                           .data(GaithersburgValues)
+                           .enter()
+                           .append('rect')
+                            //    .attr('fill', function(d) {
+                            //        return colors(d);
+                            //    })
+                               .attr('fill', "green")
+                               .attr('width', barWidth)
+                               .attr('height' , height)
+                               .attr('x', function(d, i) {
+                                   return (i + 0.45) *(barWidth + barOffset);
+                               })
+                               .attr('y', height)
+                           
+           
+                               // Event Handlers
+                               .on('mouseover', function(d) {
+           
+                                   tooltip.transition().duration(200)
+                                       .style('opacity', 0.9)
+           
+                                   tooltip.html(d)
                                        .style('left', (d3.event.pageX - 35) + "px")
                                        .style('top', (d3.event.pageY - 30) + "px")
                                        
